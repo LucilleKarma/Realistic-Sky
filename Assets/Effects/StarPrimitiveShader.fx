@@ -1,6 +1,7 @@
 sampler starTexture : register(s1);
 sampler atmosphereTexture : register(s2);
 
+bool invertedGravity;
 float opacity;
 float glowIntensity;
 float globalTime;
@@ -44,6 +45,13 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
     float2 coords = input.TextureCoordinates;
     float2 position = input.Position.xy;
     float2 screenCoords = position / screenSize;
+    
+    // Account for the pesky gravity potions...
+    if (invertedGravity)
+    {
+        position.y = screenSize.y - position.y;
+        screenCoords.y = 1 - screenCoords.y;
+    }
     
     // Calculate the base color of the star.
     float4 color = input.Color * tex2D(starTexture, coords);

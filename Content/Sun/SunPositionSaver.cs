@@ -75,7 +75,7 @@ public class SunPositionSaver : ModSystem
             return;
         }
 
-        cursor.Emit(OpCodes.Ldloc, moonPositionIndex);
+        cursor.EmitLdloc(moonPositionIndex);
         cursor.EmitDelegate<Action<Vector2>>(moonPosition => MoonPosition = moonPosition);
     }
 

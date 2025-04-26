@@ -8,6 +8,7 @@ using RealisticSky.Content.NightSky;
 using RealisticSky.Content.Sun;
 using Terraria;
 using Terraria.Graphics.Effects;
+using Terraria.ModLoader;
 
 namespace RealisticSky.Content;
 
@@ -143,39 +144,22 @@ public class RealisticSkyManager : CustomSky
         if (!CanRender)
             return;
 
-        // Calculate the background draw matrix in advance.
-        Matrix backgroundMatrix = Main.BackgroundViewMatrix.TransformationMatrix;
-        Vector3 translationDirection = new(1f, Main.BackgroundViewMatrix.Effects.HasFlag(SpriteEffects.FlipVertically) ? -1f : 1f, 1f);
-        backgroundMatrix.Translation -= Main.BackgroundViewMatrix.ZoomMatrix.Translation * translationDirection;
-
-        // Draw stars and the galaxy.
-        Main.spriteBatch.End();
-        Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, Main.Rasterizer, null, Matrix.Identity);
-        GalaxyRenderer.Render();
-
-        Main.spriteBatch.End();
-        Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearWrap, DepthStencilState.None, Main.Rasterizer, null, backgroundMatrix);
-        StarsRenderer.Render(Opacity, backgroundMatrix);
+        spriteBatch.End(out SpriteBatchSnapshot snapshot);
+        spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearWrap, DepthStencilState.None, Main.Rasterizer, null, Main.BackgroundViewMatrix.EffectMatrix);
 
         // Draw the atmosphere.
         AtmosphereRenderer.RenderFromTarget();
 
         // Draw bloom over the sun.
         if (Main.dayTime)
-        {
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, Main.Rasterizer, null, Matrix.Identity);
             SunRenderer.Render(1f - SunlightIntensityByTime);
-        }
 
-        // Draw clouds.
-        Main.spriteBatch.End();
-        Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearWrap, DepthStencilState.None, Main.Rasterizer, null, backgroundMatrix);
+        // Draw clouds
         CloudsRenderer.Render();
 
         // Return to standard drawing.
-        Main.spriteBatch.End();
-        Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, backgroundMatrix);
+        spriteBatch.End();
+        spriteBatch.Begin(in snapshot);
     }
 
     public override void Update(GameTime gameTime)

@@ -8,7 +8,7 @@ namespace RealisticSky.Assets;
 /// </summary>
 public static class TexturesRegistry
 {
-    public const string ExtraTexturesPath = $"{nameof(RealisticSky)}/Assets/ExtraTextures";
+    private const string ExtraTexturesPath = $"{nameof(RealisticSky)}/Assets/ExtraTextures";
 
     public static readonly LazyAsset<Texture2D> BloomCircle = LazyAsset<Texture2D>.RequestAsync($"{ExtraTexturesPath}/BloomCircle");
 

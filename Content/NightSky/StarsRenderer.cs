@@ -151,6 +151,10 @@ public class StarsRenderer : ModSystem
 
     public static void Render(float opacity, Matrix backgroundMatrix)
     {
+        // Don't waste resources rendering anything if there are no stars to draw.
+        if (RealisticSkyConfig.Instance.NightSkyStarCount <= 0)
+            return;
+
         // Make vanilla's stars disappear. They are not needed.
         // This only applies if the player is on the surface so that the shimmer stars are not interfered with.
         // TODO -- Consider making custom stars for the Aether?
@@ -168,23 +172,20 @@ public class StarsRenderer : ModSystem
         if (starOpacity <= 0f)
             return;
 
-        // Since this can render on the mod screen it's important that the shader be checked for if it's disposed or not.
-        if (!GameShaders.Misc.TryGetValue(StarShaderKey, out MiscShaderData s))
-            return;
-        Effect starShader = s.Shader;
+        
+        Effect starShader = EffectsRegistry.StarPrimitiveShader.Value;
         if (starShader?.IsDisposed ?? true)
             return;
 
-        // Don't waste resources rendering anything if there are no stars to draw.
-        if (RealisticSkyConfig.Instance.NightSkyStarCount <= 0)
-            return;
+        GraphicsDevice gd = Main.instance.GraphicsDevice;
 
         // Prepare the star shader.
-        Vector2 screenSize = Vector2.Transform(new Vector2(Main.instance.GraphicsDevice.Viewport.Width, Main.instance.GraphicsDevice.Viewport.Height), backgroundMatrix);
+        Vector2 screenSize = new(gd.Viewport.Width, gd.Viewport.Height);
         starShader.Parameters["opacity"]?.SetValue(starOpacity);
-        starShader.Parameters["projection"]?.SetValue(CalculatePerspectiveMatrix());
+        starShader.Parameters["projection"]?.SetValue(CalculatePerspectiveMatrix() * backgroundMatrix);
         starShader.Parameters["globalTime"]?.SetValue(Main.GlobalTimeWrappedHourly * 0.9f);
         starShader.Parameters["sunPosition"]?.SetValue(Main.dayTime ? SunPositionSaver.SunPosition : Vector2.One * 50000f);
+        starShader.Parameters["invertedGravity"]?.SetValue(player.InvertedGravity);
         starShader.Parameters["minTwinkleBrightness"]?.SetValue(MinTwinkleBrightness);
         starShader.Parameters["maxTwinkleBrightness"]?.SetValue(MaxTwinkleBrightness);
         starShader.Parameters["distanceFadeoff"]?.SetValue(Main.eclipse ? 0.11f : 1f);
@@ -192,20 +193,22 @@ public class StarsRenderer : ModSystem
         starShader.CurrentTechnique.Passes[0].Apply();
 
         // Request the atmosphere target.
-        AtmosphereRenderer.AtmosphereTarget.Request();
+        AtmosphereRenderer.AtmosphereTarget?.Request();
 
         // Supply textures.
-        Main.instance.GraphicsDevice.Textures[1] = TexturesRegistry.BloomCircle.Value;
-        Main.instance.GraphicsDevice.SamplerStates[1] = SamplerState.LinearWrap;
-        Main.instance.GraphicsDevice.Textures[2] = !AtmosphereRenderer.AtmosphereTarget.IsReady ? TextureAssets.MagicPixel.Value : AtmosphereRenderer.AtmosphereTarget.GetTarget();
-        Main.instance.GraphicsDevice.SamplerStates[2] = SamplerState.LinearClamp;
-        Main.instance.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
+        gd.Textures[1] = TexturesRegistry.BloomCircle.Value;
+        gd.SamplerStates[1] = SamplerState.LinearWrap;
+
+        // Supply the atmophere target content if it is ready, otherwise use a solid color.
+        gd.Textures[2] = AtmosphereRenderer.AtmosphereTarget?.IsReady ?? true ? AtmosphereRenderer.AtmosphereTarget?.GetTarget() : TextureAssets.MagicPixel.Value;
+        gd.SamplerStates[2] = SamplerState.LinearClamp;
+        gd.RasterizerState = RasterizerState.CullNone;
 
         // Render the stars.
-        Main.instance.GraphicsDevice.Indices = StarIndexBuffer;
-        Main.instance.GraphicsDevice.SetVertexBuffer(StarVertexBuffer);
-        Main.instance.GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, StarVertexBuffer.VertexCount, 0, StarIndexBuffer.IndexCount / 3);
-        Main.instance.GraphicsDevice.SetVertexBuffer(null);
-        Main.instance.GraphicsDevice.Indices = null;
+        gd.Indices = StarIndexBuffer;
+        gd.SetVertexBuffer(StarVertexBuffer);
+        gd.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, StarVertexBuffer.VertexCount, 0, StarIndexBuffer.IndexCount / 3);
+        gd.SetVertexBuffer(null);
+        gd.Indices = null;
     }
 }
