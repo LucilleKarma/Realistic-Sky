@@ -82,6 +82,7 @@ dotnet_diagnostic.CA1843.severity = warning
 dotnet_diagnostic.CA1854.severity = error
 dotnet_diagnostic.CA2011.severity = warning
 dotnet_diagnostic.CA2002.severity = error
+dotnet_style_prefer_collection_expression = when_types_loosely_match:suggestion
 ###############################
 # C# Coding Conventions       #
 ###############################
@@ -143,7 +144,7 @@ csharp_preserve_single_line_statements = true
 csharp_preserve_single_line_blocks = true
 csharp_using_directive_placement = outside_namespace:silent
 csharp_prefer_simple_using_statement = true:suggestion
-csharp_style_namespace_declarations = block_scoped:silent
+csharp_style_namespace_declarations = file_scoped:warning
 csharp_style_expression_bodied_lambdas = true:silent
 csharp_style_expression_bodied_local_functions = false:silent
 csharp_style_prefer_null_check_over_type_check = true:suggestion
@@ -177,6 +178,7 @@ dotnet_diagnostic.CA1841.severity = warning
 
 # CS1998: Async method lacks 'await' operators and will run synchronously
 dotnet_diagnostic.CS1998.severity = none
+csharp_style_prefer_primary_constructors = true:suggestion
 
 [*.vb]
 # Modifier preferences

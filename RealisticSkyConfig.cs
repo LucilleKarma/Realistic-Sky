@@ -3,140 +3,139 @@ using RealisticSky.Content.NightSky;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 
-namespace RealisticSky
+namespace RealisticSky;
+
+[BackgroundColor(86, 109, 154, 216)]
+public class RealisticSkyConfig : ModConfig
 {
-    [BackgroundColor(86, 109, 154, 216)]
-    public class RealisticSkyConfig : ModConfig
+    public static RealisticSkyConfig Instance => ModContent.GetInstance<RealisticSkyConfig>();
+
+    /// <summary>
+    /// The minimum wavelength a color channel can have,
+    /// </summary>
+    public const float MinWavelength = 100f;
+
+    /// <summary>
+    /// The maximum wavelength a color channel can have,
+    /// </summary>
+    public const float MaxWavelength = 1100f;
+
+    /// <summary>
+    /// The minimum exposure coefficient for sunlight.
+    /// </summary>
+    public const float MinSunlightExposure = -3f;
+
+    /// <summary>
+    /// The maximum exposure coefficient for sunlight.
+    /// </summary>
+    public const float MaxSunlightExposure = 3f;
+
+    /// <summary>
+    /// The minimum exposure coefficient for clouds.
+    /// </summary>
+    public const float MinCloudExposure = -2f;
+
+    /// <summary>
+    /// The maximum exposure coefficient for clouds.
+    /// </summary>
+    public const float MaxCloudExposure = 2f;
+
+    /// <summary>
+    /// The maximum amount of stars that can exist in the night sky.
+    /// </summary>
+    public const int MaxStarCount = 100000;
+
+    public override ConfigScope Mode => ConfigScope.ClientSide;
+
+    [BackgroundColor(44, 54, 128, 192)]
+    [DefaultValue(true)]
+    public bool ShowInMainMenu
     {
-        public static RealisticSkyConfig Instance => ModContent.GetInstance<RealisticSkyConfig>();
+        get;
+        set;
+    }
 
-        /// <summary>
-        /// The minimum wavelength a color channel can have,
-        /// </summary>
-        public const float MinWavelength = 100f;
+    [BackgroundColor(44, 54, 128, 192)]
+    [DefaultValue(false)]
+    public bool PerformanceMode
+    {
+        get;
+        set;
+    }
 
-        /// <summary>
-        /// The maximum wavelength a color channel can have,
-        /// </summary>
-        public const float MaxWavelength = 1100f;
+    [BackgroundColor(44, 54, 128, 192)]
+    [DefaultValue(750f)]
+    [Range(MinWavelength, MaxWavelength)]
+    public float RedWavelength
+    {
+        get;
+        set;
+    }
 
-        /// <summary>
-        /// The minimum exposure coefficient for sunlight.
-        /// </summary>
-        public const float MinSunlightExposure = -3f;
+    [BackgroundColor(44, 54, 128, 192)]
+    [DefaultValue(530f)]
+    [Range(MinWavelength, MaxWavelength)]
+    public float GreenWavelength
+    {
+        get;
+        set;
+    }
 
-        /// <summary>
-        /// The maximum exposure coefficient for sunlight.
-        /// </summary>
-        public const float MaxSunlightExposure = 3f;
+    [BackgroundColor(44, 54, 128, 192)]
+    [DefaultValue(420f)]
+    [Range(MinWavelength, MaxWavelength)]
+    public float BlueWavelength
+    {
+        get;
+        set;
+    }
 
-        /// <summary>
-        /// The minimum exposure coefficient for clouds.
-        /// </summary>
-        public const float MinCloudExposure = -2f;
+    [BackgroundColor(44, 54, 128, 192)]
+    [DefaultValue(0f)]
+    [Range(MinSunlightExposure, MaxSunlightExposure)]
+    public float SunlightExposure
+    {
+        get;
+        set;
+    }
 
-        /// <summary>
-        /// The maximum exposure coefficient for clouds.
-        /// </summary>
-        public const float MaxCloudExposure = 2f;
+    [BackgroundColor(44, 54, 128, 192)]
+    [DefaultValue(true)]
+    public bool RealisticClouds
+    {
+        get;
+        set;
+    }
 
-        /// <summary>
-        /// The maximum amount of stars that can exist in the night sky.
-        /// </summary>
-        public const int MaxStarCount = 100000;
+    [BackgroundColor(44, 54, 128, 192)]
+    [DefaultValue(0f)]
+    [Range(MinCloudExposure, MaxCloudExposure)]
+    public float CloudExposure
+    {
+        get;
+        set;
+    }
 
-        public override ConfigScope Mode => ConfigScope.ClientSide;
+    [BackgroundColor(44, 54, 128, 192)]
+    [DefaultValue(16000)]
+    [Range(0, MaxStarCount)]
+    [Slider]
+    public int NightSkyStarCount
+    {
+        get;
+        set;
+    }
 
-        [BackgroundColor(44, 54, 128, 192)]
-        [DefaultValue(true)]
-        public bool ShowInMainMenu
-        {
-            get;
-            set;
-        }
+    [BackgroundColor(44, 54, 128, 192)]
+    [DefaultValue(false)]
+    public bool DisableEffectsDuringBossFights
+    {
+        get;
+        set;
+    }
 
-        [BackgroundColor(44, 54, 128, 192)]
-        [DefaultValue(false)]
-        public bool PerformanceMode
-        {
-            get;
-            set;
-        }
-
-        [BackgroundColor(44, 54, 128, 192)]
-        [DefaultValue(750f)]
-        [Range(MinWavelength, MaxWavelength)]
-        public float RedWavelength
-        {
-            get;
-            set;
-        }
-
-        [BackgroundColor(44, 54, 128, 192)]
-        [DefaultValue(530f)]
-        [Range(MinWavelength, MaxWavelength)]
-        public float GreenWavelength
-        {
-            get;
-            set;
-        }
-
-        [BackgroundColor(44, 54, 128, 192)]
-        [DefaultValue(420f)]
-        [Range(MinWavelength, MaxWavelength)]
-        public float BlueWavelength
-        {
-            get;
-            set;
-        }
-
-        [BackgroundColor(44, 54, 128, 192)]
-        [DefaultValue(0f)]
-        [Range(MinSunlightExposure, MaxSunlightExposure)]
-        public float SunlightExposure
-        {
-            get;
-            set;
-        }
-
-        [BackgroundColor(44, 54, 128, 192)]
-        [DefaultValue(true)]
-        public bool RealisticClouds
-        {
-            get;
-            set;
-        }
-
-        [BackgroundColor(44, 54, 128, 192)]
-        [DefaultValue(0f)]
-        [Range(MinCloudExposure, MaxCloudExposure)]
-        public float CloudExposure
-        {
-            get;
-            set;
-        }
-
-        [BackgroundColor(44, 54, 128, 192)]
-        [DefaultValue(16000)]
-        [Range(0, MaxStarCount)]
-        [Slider]
-        public int NightSkyStarCount
-        {
-            get;
-            set;
-        }
-
-        [BackgroundColor(44, 54, 128, 192)]
-        [DefaultValue(false)]
-        public bool DisableEffectsDuringBossFights
-        {
-            get;
-            set;
-        }
-
-        public override void OnChanged()
-        {
-            StarsRenderer.GenerateStars(NightSkyStarCount);
-        }
+    public override void OnChanged()
+    {
+        StarsRenderer.GenerateStars(NightSkyStarCount);
     }
 }
