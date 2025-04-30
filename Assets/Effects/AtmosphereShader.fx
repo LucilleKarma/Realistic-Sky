@@ -1,6 +1,5 @@
 sampler baseTexture : register(s0);
 
-bool invertedGravity;
 bool performanceMode;
 float globalTime;
 float atmosphereRadius;
@@ -118,10 +117,6 @@ float4 CalculateScatteredLight(float3 rayOrigin, float3 rayDirection)
 
 float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0, float4 position : SV_Position) : COLOR0
 {
-    // Account for the pesky gravity potions...
-    if (invertedGravity)
-        position.y = screenHeight - position.y;
-    
     // Calculate how much scattered light will end up in the current fragment.
     float4 atmosphereLight = CalculateScatteredLight(float3(position.xy, -atmosphereRadius - 5), float3(0, 0, 1));
     

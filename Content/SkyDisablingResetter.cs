@@ -1,9 +1,8 @@
 ﻿using Terraria.ModLoader;
 
-namespace RealisticSky.Content
+namespace RealisticSky.Content;
+
+public class SkyDisablingResetter : ModSystem
 {
-    public class SkyDisablingResetter : ModSystem
-    {
-        public override void PreUpdateWorld() => RealisticSkyManager.TemporarilyDisabled = false;
-    }
+    public override void PreUpdateWorld() => RealisticSkyManager.TemporarilyDisabled = false;
 }

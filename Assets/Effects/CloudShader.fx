@@ -1,6 +1,5 @@
 sampler baseTexture : register(s0);
 
-bool invertedGravity;
 float cloudHorizontalOffset;
 float globalTime;
 float densityFactor;
@@ -97,9 +96,6 @@ float4 CalculateScatteredLight(float3 rayOrigin, float3 rayDirection)
 
 float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0, float4 position : SV_Position) : COLOR0
 {
-    // Account for the pesky gravity potions...
-    if (invertedGravity)
-        position.y = screenSize.y - position.y;
     
     // Calculate how much scattered light will end up in the current fragment.
     float4 cloudLight = CalculateScatteredLight(float3(position.xy, -1), float3(0, 0, 1));
